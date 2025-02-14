@@ -23,6 +23,9 @@ export class UserService {
     }
 
     async createUser(userData: Partial<User>): Promise<User> { // Yeni bir kullanıcı oluşturur
-        return await this.userRepository.save(userData);
+        this.logger.log(`📩 Yeni kullanıcı oluşturuluyor: ${JSON.stringify(userData)}`);
+        const newUSer = await this.userRepository.save(userData);
+        this.logger.log(`✅ Yeni kullanıcı oluşturuldu: ${JSON.stringify(newUSer)}`);
+        return newUSer;
     }
 }

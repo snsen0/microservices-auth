@@ -9,21 +9,34 @@ import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { UserService } from 'src/user/user.service';
 
 // Kullanıcı giriş ve kayıt işlemleri
 
 @ApiTags('Auth') // Swagger belgelerindeki grup adı
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private readonly userService: UserService, // Kullanıcı işlemleri için UserService eklendi
+  ) {}
 
   @Post('register')
   @UsePipes(new ValidationPipe()) // class-validator doğrulamalarını aktif eder
   @ApiBody({ type: RegisterDto }) // Swagger belgelerindeki request body
-  async register(@Body() body: { email: string; password: string }) {
+  async register(@Body() body: RegisterDto) {
     // Kullanıcı kayıt işlemi
     const hashedPassword = await this.authService.hashPassword(body.password); // Şifre hashleme işlemi
-    return { message: 'User registered', hashedPassword };
+
+    // Kullanıcı oluşturma işlemi
+    const newUser = await this.userService.createUser({
+      email: body.email,
+      password: hashedPassword,
+      name: body.name,
+      phone: body.phone,
+    });
+
+    return { message: 'User registered', user: newUser };
   }
 
   @Post('login')

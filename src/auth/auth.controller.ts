@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Post,
+  UnauthorizedException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
@@ -42,8 +44,23 @@ export class AuthController {
   @Post('login')
   @ApiBody({ type: LoginDto }) // Swagger belgelerindeki request body
   @UsePipes(new ValidationPipe()) // class-validator doğrulamalarını aktif eder
-  async login(@Body() body: { email: string; password: string }) {
-    // Şifre doğrulama ve token oluşturma işlemi
-    return { token: await this.authService.generateJwtToken(1, body.email) };
+  async login(@Body() body: LoginDto) {
+    const { email, password } = body; // Request body'den email ve password alındı
+
+    // Kullanıcıyı email adresine göre bulma işlemi (UserService'den geliyor) (veritabanından çeker)
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Email veya şifre hatalı');
+    }
+
+    // Şifre doğrulama işlemi
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Email veya şifre hatalı');
+    }
+
+    // JWT token oluştur ve döndür (AuthService'den geliyor)
+    const token = await this.authService.generateJwtToken(user.id, user.email);
+    return { message: 'Giriş başarılı', token };
   }
 }

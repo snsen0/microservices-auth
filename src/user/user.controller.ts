@@ -15,7 +15,11 @@ import {
 } from '@nestjs/swagger';
 import { LoggerService } from 'src/shared/logger.service';
 
-// Kullanıcı bilgilerini almak için API endpoint'lerini barındırır
+/**
+ * UserController, Kullanıcı bilgilerini almak için API endpoint'lerini barındırır
+ * Kullanıcıyı email adresine göre bulur
+ * Kullancıyı email adresine göre siler
+ */
 
 @ApiTags('User') // Swagger belgelerindeki grup adı
 @Controller('user')
@@ -45,6 +49,7 @@ export class UserController {
     }
   }
 
+  // Kullancıyı email adresine göre siler
   @Delete(':email')
   @ApiOperation({ summary: 'Belirtilen email’e sahip kullanıcıyı siler' })
   @ApiParam({

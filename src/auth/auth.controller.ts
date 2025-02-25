@@ -16,7 +16,7 @@ import { HashService } from 'src/shared/hash.service';
 import { EmailService } from 'src/email/email.service';
 
 /**
-* Kimlik doğrulama ile ilgili HTTP isteklerini yöneten denetleyicidir.
+* AuthController, Kimlik doğrulama ile ilgili HTTP isteklerini yöneten denetleyicidir.
 * Kullanıcı giriş ve kayıt işlemleri 
 * */
 

@@ -25,11 +25,6 @@ npm i bcrypt
 npm install @nestjs/jwt jsonwebtoken
 ```
 
-### JWT token’ını kontrol etmek için
-```
-npm install passport-jwt
-```
-
 ### E-posta göndermek için
 ```
 npm install nodemailer
@@ -38,12 +33,6 @@ npm install nodemailer
 ### Swagger için
 ```
 npm install @nestjs/swagger swagger-ui-express
-
-```
-
-### Veri doğrulama (validation) işlemleri için kullanılır. API'ye gelen isteklerin (POST, PUT vb.) içeriğini kontrol edip yanlış formatta olanları engellemek için gereklidir.
-```
-npm install class-validator class-transformer
 
 ```
 

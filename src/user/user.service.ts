@@ -4,6 +4,15 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { LoggerService } from 'src/shared/logger.service';
 
+/**
+  * UserService, kullanıcı bilgilerini almak için gerekli işlemleri gerçekleştirir.
+  * Email adresine göre kullanıcıyı getirir.
+  * Yeni kullanıcı oluşturur.
+  * Kullanıcı bilgilerini günceller.
+  * Email adresine göre kullanıcıyı siler.
+  */
+
+
 @Injectable()
 export class UserService {
   constructor(

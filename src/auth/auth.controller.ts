@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
@@ -32,6 +32,10 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @ApiOperation({
+      summary: 'Kullanıcıyı kaydet',
+      description: 'Kullanıcının email, name ve phone bilgilerini ile beraber üye mailine random şifre göndererek şifre ile diğer bilgileri de veritabanına kayıt eder.',
+    })
   @UsePipes(new ValidationPipe()) // class-validator doğrulamalarını aktif eder
   @ApiBody({ type: RegisterDto }) // Swagger belgelerindeki request body
   async register(@Body() registerDto: RegisterDto) {
@@ -66,6 +70,10 @@ export class AuthController {
   }
 
   @Post('login')
+  @ApiOperation({
+    summary: 'Üye girişi',
+    description: 'Üyeler buradan girişini yapar.',
+  })
   @ApiBody({ type: LoginDto }) // Swagger belgelerindeki request body
   @UsePipes(new ValidationPipe()) // class-validator doğrulamalarını aktif eder
   async login(@Body() body: LoginDto) {

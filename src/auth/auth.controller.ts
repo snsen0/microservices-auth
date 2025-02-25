@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Post,
@@ -12,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from 'src/user/user.service';
 import { HashService } from 'src/shared/hash.service';
+import { EmailService } from 'src/email/email.service';
 
 /**
 * Kimlik doğrulama ile ilgili HTTP isteklerini yöneten denetleyicidir.
@@ -25,25 +27,42 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private readonly userService: UserService, // Kullanıcı işlemleri için UserService eklendi
-    private hashservice: HashService, // HashService sınıfı eklendi
+    private hashService: HashService, // HashService sınıfı eklendi
+    private emailService: EmailService, // EmailService sınıfı
   ) {}
 
   @Post('register')
   @UsePipes(new ValidationPipe()) // class-validator doğrulamalarını aktif eder
   @ApiBody({ type: RegisterDto }) // Swagger belgelerindeki request body
-  async register(@Body() body: RegisterDto) {
-    // Kullanıcı kayıt işlemi
-    const hashedPassword = await this.hashservice.hashPassword(body.password); // Şifre hashleme işlemi
+  async register(@Body() registerDto: RegisterDto) {
+    const { email, name, phone } = registerDto;
+    const normalizedEmail = email.trim().toLowerCase();
 
-    // Kullanıcı oluşturma işlemi
+    // 1️⃣ Kullanıcı zaten var mı kontrol et
+    const existingUser = await this.userService.findByEmail(normalizedEmail).catch(() => null);
+    if (existingUser) {
+      throw new BadRequestException('Bu e-posta adresi zaten kullanılıyor.');
+    }
+
+    // 2️⃣ Geçici şifre oluştur
+    const tempPassword = this.hashService.generateTempPassword();
+    const hashedPassword = await this.hashService.hashPassword(tempPassword);
+
+    // 3️⃣ Kullanıcıyı oluştur ve kaydet
     const newUser = await this.userService.createUser({
-      email: body.email,
-      password: hashedPassword,
-      name: body.name,
-      phone: body.phone,
+      email: normalizedEmail,
+      name,
+      phone,
+      password: hashedPassword, // Şifre hashlenmiş şekilde kaydediliyor
     });
 
-    return { message: 'User registered', user: newUser };
+    // 4️⃣ Kullanıcıya geçici şifreyi e-posta ile gönder
+    await this.emailService.sendTemporaryPassword(normalizedEmail);
+
+    return {
+      message: 'Kullanıcı başarıyla kaydedildi ve geçici şifre gönderildi.',
+      userId: newUser.id,
+    };
   }
 
   @Post('login')
@@ -59,7 +78,7 @@ export class AuthController {
     }
 
     // Şifre doğrulama işlemi
-    const isPasswordValid = await this.hashservice.comparePassword(password, user.password);
+    const isPasswordValid = await this.hashService.comparePassword(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Email veya şifre hatalı');
     }

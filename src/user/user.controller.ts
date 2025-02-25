@@ -1,6 +1,6 @@
 import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoggerService } from 'src/shared/logger.service';
 
 // Kullanıcı bilgilerini almak için API endpoint'lerini barındırır
@@ -15,6 +15,10 @@ export class UserController {
 
   // Kullanıcıyı email adresine göre bulur
   @Get(':email')
+  @ApiOperation({
+      summary: 'Kullanıcıyı bul',
+      description: 'Kullanıcıyı email adresine göre bulur.',
+    })
   async getUserByEmail(@Param('email') email: string) {
     // Parametre olarak email alır
     try {

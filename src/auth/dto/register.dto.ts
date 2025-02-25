@@ -13,9 +13,4 @@ export class RegisterDto {
     @ApiProperty({ example: '1234567890', description: 'Kullanıcının telefon numarası' })
     @IsString()
     phone: string;
-
-    @ApiProperty({ example: 'password', description: 'Kullanıcının şifresi (en az 6 karakter)' })
-    @IsString()
-    @MinLength(6, { message: 'Şifre en az 6 karakter olmalıdır' })
-    password: string;
 }

@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
 import { SharedModule } from 'src/shared/shared.module';
+import { EmailModule } from 'src/email/email.module';
 
 
 @Module({
@@ -12,6 +13,7 @@ import { SharedModule } from 'src/shared/shared.module';
     ConfigModule,
     UserModule,
     SharedModule,
+    EmailModule,
     JwtModule.register({ // JwtModule.register metodu ile JwtModule modülünü projemize ekliyoruz.
       secret: process.env.JWT_SECRET, // Secret key'i .env dosyasından alıyoruz.
       signOptions: { expiresIn: '1d' }, // Token'ın geçerlilik süresini 1 gün olarak belirledik.

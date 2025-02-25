@@ -5,11 +5,6 @@
 npm install @nestjs/microservices
 ```
 
-### RabbitMQ (Api.Gateway file)
-```
-npm install @nestjs/microservices amqp-connection-manager amqplib
-```
-
 ### Ortam değişkenleri yönetmek için
 ```
 npm install @nestjs/config
@@ -28,12 +23,6 @@ npm i bcrypt
 ### Token bazlı doğrulama için
 ```
 npm install @nestjs/jwt jsonwebtoken
-```
-
-### Kimlik doğrulama için (NestJS içinde Passport.js kullanımını sağlar)
-```
-npm install @nestjs/passport
-npm install passport-local
 ```
 
 ### JWT token’ını kontrol etmek için

@@ -81,20 +81,22 @@ export class UserService {
   }
 
   /**
-   * 📌 Kullanıcıyı ID'ye göre siler.
-   * @param userId Kullanıcının ID'si
-   * @returns Silme işleminin sonucu
+   * 📌 Email adresine göre kullanıcıyı siler.
+   * @param email Kullanıcının email adresi
    */
+  async deleteUserByEmail(email: string): Promise<void> {
+    const normalizedEmail = email.trim().toLowerCase(); // E-postayı normalize et
 
-  async deleteUser(userId: number): Promise<void> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { email: normalizedEmail },
+    });
 
     if (!user) {
-      this.logger.error(`❌ Kullanıcı bulunamadı: ID ${userId}`);
-      throw new NotFoundException(`Kullanıcı bulunamadı: ID ${userId}`);
+      this.logger.error(`❌ Kullanıcı bulunamadı: ${normalizedEmail}`);
+      throw new NotFoundException(`Kullanıcı bulunamadı: ${normalizedEmail}`);
     }
 
-    await this.userRepository.delete(userId);
-    this.logger.log(`🗑️ Kullanıcı silindi: ID ${userId}`);
+    await this.userRepository.delete({ email: normalizedEmail });
+    this.logger.log(`🗑️ Kullanıcı silindi: ${normalizedEmail}`);
   }
 }
